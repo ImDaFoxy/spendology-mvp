@@ -1,0 +1,22 @@
+.sidebar{
+    background-color: #378CE7;
+    color: white;
+    height: 100%;
+}
+.sidebar a{
+    margin-left: 10px;
+    display: block;
+    color: white;
+    padding-bottom: 10px;
+    font-size: 30px;
+    text-decoration: none;
+}
+.card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.row{
+    align-items: stretch;
+}
