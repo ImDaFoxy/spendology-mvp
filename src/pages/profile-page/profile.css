@@ -1,12 +1,14 @@
 .sidebar{
-    background-color: #378CE7;
-    color: white;
+    background-color: #F1F7FA;
+    color: black;
     height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 .sidebar a{
     margin-left: 10px;
     display: block;
-    color: white;
+    color: black;
     padding-bottom: 10px;
     font-size: 30px;
     text-decoration: none;

@@ -27,9 +27,9 @@ export const Profile = () => {
                     <div className="col-md-4 mt-1 d-flex">
                         <div className="card text-center sidebar flex-grow-1">
                             <div className="card-body">
-                                <img src="./user.png" className="rounded-circle" width="150" alt="User profile picture"></img>
+                                <img src="https://icons.iconarchive.com/icons/iconarchive/cute-animal/256/Cute-Fox-icon.png" className="rounded-circle" width="150" alt="User profile picture"></img>
                                 <div className="mt-3">
-                                    <h3>Firstname Lastname</h3>
+                                    <h3>Foxy</h3>
                                     <a href="">Expense Tracker</a> <b></b>
                                     <a href="">Settings</a> <b></b>
                                     <a href="">Log Out</a>
@@ -47,16 +47,16 @@ export const Profile = () => {
                                     <table className="table">
                                         <tbody>
                                             <tr>
-                                                <td><h5>Full Name</h5></td>
-                                                <td><p className="text-secondary">Firstname Lastname</p></td>
+                                                <td><p>Full Name</p></td>
+                                                <td><h5 className="text-secondary">Foxy</h5></td>
                                             </tr>
                                             <tr>
-                                                <td><h5>Username</h5></td>
-                                                <td><p className="text-secondary">name123</p></td>
+                                                <td><p>Username</p></td>
+                                                <td><h5 className="text-secondary">DaFoxy</h5></td>
                                             </tr>
                                             <tr>
-                                                <td><h5>Email</h5></td>
-                                                <td><p className="text-secondary">name@gmail.com</p></td>
+                                                <td><p>Email</p></td>
+                                                <td><h5 className="text-secondary">Foxy@gmail.com</h5></td>
                                             </tr>
                                         </tbody>
                                     </table>

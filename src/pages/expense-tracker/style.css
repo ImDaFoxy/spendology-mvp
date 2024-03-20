@@ -60,6 +60,10 @@ body {
     text-decoration: none;
 }
 
+.me-auto{
+    padding-left: 750px;
+}
+
 .bal-sum-container {
     padding: 0px;
     display: flex;

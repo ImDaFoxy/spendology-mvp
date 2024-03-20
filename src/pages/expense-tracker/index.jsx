@@ -32,7 +32,7 @@ export const ExpenseTracker = () => {
                 <div className="container">
                     <Navbar bg="lightblue" variant="dark" expand="md" className="navbar-custom">
                         <Container>
-                            <Navbar.Brand href="#home" color="#E7D27C">Spendology</Navbar.Brand>
+                            <Navbar.Brand href="#home">Spendology</Navbar.Brand>
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setExpanded(!expanded)} />
                             <Navbar.Collapse id="responsive-navbar-nav" className={expanded ? 'show' : ''}>
                                 <Nav className="me-auto">
