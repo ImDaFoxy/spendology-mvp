@@ -48,8 +48,14 @@ export const ExpenseTracker = () => {
                         <div className="left">
                             <div className='bal-sum-container'>
                                 <div className="balance-container">
-                                    <h3>Your Balance</h3>
-                                    <h2>Rp 0</h2>
+                                    <div className='total-balance'>
+                                        <h3>Your Balance</h3>
+                                        <h2>Rp 0</h2>
+                                    </div>
+                                    <div className='saving-balance'>
+                                        <h3>Your Savings</h3>
+                                        <h2>Rp 0</h2>
+                                    </div>
                                 </div>
                                 <div className="summary-container">
                                     <h3>This month's summary</h3>

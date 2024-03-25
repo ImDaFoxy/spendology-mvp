@@ -22,10 +22,12 @@ body {
 .left {
     flex: 1;
     margin-right: 20px;
+    height: 100%;
 }
 
 .right {
     flex: 1;
+    height: 100%;
 }
 
 .navbar-custom .nav-link {
@@ -61,7 +63,7 @@ body {
 }
 
 .me-auto{
-    padding-left: 750px;
+    padding-left: auto;
 }
 
 .bal-sum-container {
