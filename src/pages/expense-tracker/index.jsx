@@ -22,6 +22,8 @@ export const ExpenseTracker = () => {
             newSubcategoryOptions = ['Salary', 'Bonus', 'Other'];
         } else if (selectedCategory === 'expense') {
             newSubcategoryOptions = ['Rent', 'Utilities', 'Groceries', 'Other'];
+        } else if (selectedCategory === 'savings') {
+            newSubcategoryOptions = ['Insert', 'Take out'];
         }
         setSubcategoryOptions(newSubcategoryOptions);
     };
@@ -79,6 +81,7 @@ export const ExpenseTracker = () => {
                                         <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
                                             <option value="income">Income</option>
                                             <option value="expense">Expense</option>
+                                            <option value="savings">Savings</option>
                                         </select>
                                     </div>
                                     <div className="form-group">

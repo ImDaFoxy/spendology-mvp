@@ -1,12 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var categoryDropdown = document.getElementById('category');
-    // Attach the event listener to the category dropdown
-    categoryDropdown.addEventListener('change', updateSubcategoryOptions);
-
-    // Call the function initially to set up the subcategory options
-    updateSubcategoryOptions();
-});
-
 export function updateSubcategoryOptions() {
     console.log("updateSubcategoryOptions function called");  // Add this line for debugging
     
@@ -20,11 +11,13 @@ export function updateSubcategoryOptions() {
     var selectedCategory = categoryDropdown.value;
 
     // Define subcategory options based on the selected category
-    var subcategoryOptions = [];
+    let subcategoryOptions = []; // Change const to let here
     if (selectedCategory === 'income') {
         subcategoryOptions = ['Salary', 'Bonus', 'Other'];
     } else if (selectedCategory === 'expense') {
         subcategoryOptions = ['Rent', 'Utilities', 'Groceries', 'Other'];
+    } else if (selectedCategory === 'savings') {
+        subcategoryOptions = ['Insert', 'Take out'];
     }
 
     // Populate subcategory dropdown with options
