@@ -16,9 +16,8 @@ export const Profile = () => {
                         <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setExpanded(!expanded)} />
                         <Navbar.Collapse id="responsive-navbar-nav" className={expanded ? 'show' : ''}>
                             <Nav className="me-auto">
-                                <Nav.Link href="#home">Home</Nav.Link>
-                                <Nav.Link href="#about">Budget List</Nav.Link>
-                                <Nav.Link href="#services">Profile</Nav.Link>
+                                <Nav.Link href="http://localhost:3000/expense-tracker">Home</Nav.Link>
+                                <Nav.Link href="http://localhost:3000/profile-page">Profile</Nav.Link>
                             </Nav>
                         </Navbar.Collapse>
                     </Container>

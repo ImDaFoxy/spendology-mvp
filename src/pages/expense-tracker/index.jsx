@@ -7,9 +7,12 @@ export const ExpenseTracker = () => {
     const [expanded, setExpanded] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('income');
     const [subcategoryOptions, setSubcategoryOptions] = useState([]);
+    const [balance, setBalance] = useState(0);
+    const [savings, setSavings] = useState(0);
 
     useEffect(() => {
         updateSubcategoryOptions();
+        fetchBalanceAndSavings();
     }, [selectedCategory]);
 
     const handleCategoryChange = (event) => {
@@ -28,6 +31,16 @@ export const ExpenseTracker = () => {
         setSubcategoryOptions(newSubcategoryOptions);
     };
 
+    const fetchBalanceAndSavings = async () => {
+        const balanceResponse = await fetch('http://localhost:3001/balance');
+        const balanceData = await balanceResponse.json();
+        setBalance(balanceData.balance);
+
+        const savingsResponse = await fetch('http://localhost:3001/savings');
+        const savingsData = await savingsResponse.json();
+        setSavings(savingsData.savings);
+    };
+
     return (
         <>
             <div className="expense-tracker">
@@ -38,9 +51,8 @@ export const ExpenseTracker = () => {
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setExpanded(!expanded)} />
                             <Navbar.Collapse id="responsive-navbar-nav" className={expanded ? 'show' : ''}>
                                 <Nav className="me-auto">
-                                    <Nav.Link href="#home">Home</Nav.Link>
-                                    <Nav.Link href="#about">Budget List</Nav.Link>
-                                    <Nav.Link href="#services">Profile</Nav.Link>
+                                    <Nav.Link href="http://localhost:3000/expense-tracker">Home</Nav.Link>
+                                    <Nav.Link href="http://localhost:3000/profile-page">Profile</Nav.Link>
                                 </Nav>
                             </Navbar.Collapse>
                         </Container>
@@ -52,11 +64,11 @@ export const ExpenseTracker = () => {
                                 <div className="balance-container">
                                     <div className='total-balance'>
                                         <h3>Your Balance</h3>
-                                        <h2>Rp 0</h2>
+                                        <h2>Rp {balance}</h2>
                                     </div>
                                     <div className='saving-balance'>
                                         <h3>Your Savings</h3>
-                                        <h2>Rp 0</h2>
+                                        <h2>Rp {savings}</h2>
                                     </div>
                                 </div>
                                 <div className="summary-container">

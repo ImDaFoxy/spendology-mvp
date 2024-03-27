@@ -68,3 +68,17 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+Extra Notes : 
+npm install firebase    // For firebasae
+npm install bootstrap   // For Bootstrap
+
+cd to db.js :
+npm install express
+npm install pg
+npm install cors
+
+To make this work, you need to open 2 terminal : 
+1. To start /npm start
+2. The other specifically in db.js doing node db.js
