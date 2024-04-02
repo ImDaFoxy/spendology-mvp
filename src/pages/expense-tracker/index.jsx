@@ -9,6 +9,7 @@ export const ExpenseTracker = () => {
     const [subcategoryOptions, setSubcategoryOptions] = useState([]);
     const [balance, setBalance] = useState(0);
     const [savings, setSavings] = useState(0);
+    const [amount, setAmount] = useState(0);
 
     useEffect(() => {
         updateSubcategoryOptions();
@@ -17,6 +18,29 @@ export const ExpenseTracker = () => {
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
+    };
+
+    const handleAmountChange = (event) => {
+        setAmount(event.target.value);
+    };
+
+    const handleAddTransaction = async (event) => {
+        event.preventDefault();
+        
+        if (selectedCategory === 'savings') {
+            const endpoint = amount > 0 ? '/add-to-savings' : '/take-from-savings';
+            const response = await fetch(`http://localhost:3001${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: Math.abs(amount) })
+            });
+            const data = await response.json();
+            setBalance(data.balance);
+            setSavings(data.saving);
+            setAmount(0); // Reset the amount input field
+        }
     };
 
     const updateSubcategoryOptions = () => {
@@ -55,7 +79,7 @@ export const ExpenseTracker = () => {
                                     <Nav.Link href="http://localhost:3000/profile-page">Profile</Nav.Link>
                                 </Nav>
                             </Navbar.Collapse>
-                        </Container>
+                        </Container>    
                     </Navbar>
 
                     <div className="content">
@@ -87,7 +111,7 @@ export const ExpenseTracker = () => {
                             </div>
                             <div id="add-transaction" className="add-transaction">
                                 <h2>Add Transaction</h2>
-                                <form className="add-transaction-form" action="">
+                                <form className="add-transaction-form" onSubmit={handleAddTransaction}>
                                     <div className="form-group">
                                         <label htmlFor="category">Select Type:</label>
                                         <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
@@ -106,9 +130,9 @@ export const ExpenseTracker = () => {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="amount">Enter the amount of money:</label>
-                                        <input type="number" placeholder="Amount" required />
+                                        <input type="number" value={amount} onChange={handleAmountChange} placeholder="Amount" required />
                                     </div>
-                                    <button type="submit" className="submit-button">Add Transaction</button>
+                                    <button type="submit" className="submit-button" onClick={handleAddTransaction}>Add Transaction</button>
                                 </form>
                             </div>
                         </div>

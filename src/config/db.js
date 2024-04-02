@@ -1,6 +1,7 @@
 const express = require('express');
 const { Client } = require('pg');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,7 +11,7 @@ const client = new Client({
   user: 'postgres',
   host: 'localhost',
   database: 'expense',
-  password: '...',
+  password: 'goldie123',
   port: 5432, // Default PostgreSQL port
 });
 
@@ -22,6 +23,10 @@ client.connect()
   .catch(err => console.error('Error connecting to PostgreSQL server: ' + err.stack));
 
 app.use(cors()); // Allow requests from all origins
+
+// Parse JSON bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define a route to handle GET requests to fetch users
 app.get('/users', (req, res) => {
@@ -59,6 +64,46 @@ app.get('/savings', (req, res) => {
         }
         res.json({ savings: result.rows[0].saving }); // Changed from savings to saving
     });
+});
+
+// Add API endpoint to handle inserting into savings
+app.post('/add-to-savings', (req, res) => {
+  const { amount } = req.body;
+  const userId = 1; // Assuming you have a single user for simplicity
+
+  // Update user's savings and balance
+  client.query(
+      'UPDATE users SET saving = saving + $1, balance = balance - $1 WHERE id = $2 RETURNING *',
+      [amount, userId],
+      (err, result) => {
+          if (err) {
+              console.error('Error executing query: ' + err.stack);
+              res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+              return;
+          }
+          res.json(result.rows[0]);
+      }
+  );
+});
+
+// Add API endpoint to handle taking out from savings
+app.post('/take-from-savings', (req, res) => {
+  const { amount } = req.body;
+  const userId = 1; // Assuming you have a single user for simplicity
+
+  // Update user's savings and balance
+  client.query(
+      'UPDATE users SET saving = saving - $1, balance = balance + $1 WHERE id = $2 RETURNING *',
+      [amount, userId],
+      (err, result) => {
+          if (err) {
+              console.error('Error executing query: ' + err.stack);
+              res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+              return;
+          }
+          res.json(result.rows[0]);
+      }
+  );
 });
 
 // Start the Express server
