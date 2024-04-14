@@ -64,7 +64,7 @@ app.post('/add-to-savings/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { amount } = req.body;
   const typeId = 3; // Savings type_id
-  const categoryId = amount > 0 ? 8 : 9; // Insert or take out category_id
+  const categoryId = 8;
 
   try {
     await client.query('BEGIN'); // Begin transaction
@@ -94,7 +94,7 @@ app.post('/take-from-savings/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { amount } = req.body;
   const typeId = 3; // Savings type_id
-  const categoryId = amount > 0 ? 8 : 9; // Insert or take out category_id
+  const categoryId = 9;
 
   try {
     await client.query('BEGIN'); // Begin transaction
