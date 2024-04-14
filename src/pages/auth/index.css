@@ -26,21 +26,26 @@ body{
     font-size: 1.5rem;
     margin-bottom: 2rem;
   }
+
+  .create-account{
+    margin-bottom: 1rem;
+  }
   
   .login-with-google-btn {
-    background-color: #357ae8;
+    background-color: #358ae8;
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1.5rem;
     font-size: 1rem;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease;
     margin-bottom: 5px;
+    margin-top: 10px;
   }
   
   .login-with-google-btn:hover {
-    background-color: #357ae8;
+    background-color: #355ae8;
   }
 
 .sign-in-white{
@@ -51,4 +56,21 @@ body{
   width: 30%;
   padding: 60px;
 
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+} 
+
+.input-email {
+  margin-bottom: 10px; /* Adjust as needed */
+  margin-top: 10px;
+}
+
+.input-name{
+  margin-top: 10px;
 }

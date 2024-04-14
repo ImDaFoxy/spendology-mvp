@@ -9,38 +9,26 @@ export const ExpenseTracker = () => {
     const [subcategoryOptions, setSubcategoryOptions] = useState([]);
     const [balance, setBalance] = useState(0);
     const [savings, setSavings] = useState(0);
-    const [amount, setAmount] = useState(0);
+    const [userId, setUserId] = useState(null);
+    const [transactionAmount, setTransactionAmount] = useState(0);
+
+    useEffect(() => {
+        const userData = localStorage.getItem('userData');
+        if (userData) {
+            const { id } = JSON.parse(userData);
+            setUserId(id);
+        }
+    }, []);
 
     useEffect(() => {
         updateSubcategoryOptions();
-        fetchBalanceAndSavings();
-    }, [selectedCategory]);
+        if (userId) {
+            fetchBalanceAndSavings();
+        }
+    }, [selectedCategory, userId]);
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
-    };
-
-    const handleAmountChange = (event) => {
-        setAmount(event.target.value);
-    };
-
-    const handleAddTransaction = async (event) => {
-        event.preventDefault();
-        
-        if (selectedCategory === 'savings') {
-            const endpoint = amount > 0 ? '/add-to-savings' : '/take-from-savings';
-            const response = await fetch(`http://localhost:3001${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ amount: Math.abs(amount) })
-            });
-            const data = await response.json();
-            setBalance(data.balance);
-            setSavings(data.saving);
-            setAmount(0); // Reset the amount input field
-        }
     };
 
     const updateSubcategoryOptions = () => {
@@ -56,13 +44,51 @@ export const ExpenseTracker = () => {
     };
 
     const fetchBalanceAndSavings = async () => {
-        const balanceResponse = await fetch('http://localhost:3001/balance');
+        const balanceResponse = await fetch(`http://localhost:3001/balance/${userId}`);
         const balanceData = await balanceResponse.json();
         setBalance(balanceData.balance);
 
-        const savingsResponse = await fetch('http://localhost:3001/savings');
+        const savingsResponse = await fetch(`http://localhost:3001/savings/${userId}`);
         const savingsData = await savingsResponse.json();
         setSavings(savingsData.savings);
+    };
+
+    const handleTransactionAmountChange = (event) => {
+        setTransactionAmount(event.target.value);
+    };
+
+    const handleTransactionSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            let url;
+            const selectedSubcategory = document.getElementById("subcategory").value;
+
+            if (selectedCategory === 'savings') {
+                if (selectedSubcategory === 'insert') {
+                    url = `http://localhost:3001/add-to-savings/${userId}`;
+                } else if (selectedSubcategory === 'take out') {
+                    url = `http://localhost:3001/take-from-savings/${userId}`;
+                }
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ amount: transactionAmount }),
+            });
+            if (response.ok) {
+                const responseData = await response.json();
+                setBalance(responseData.balance);
+                setSavings(responseData.saving);
+                setTransactionAmount(0);
+            } else {
+                // Handle error
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     return (
@@ -71,7 +97,7 @@ export const ExpenseTracker = () => {
                 <div className="container">
                     <Navbar bg="lightblue" variant="dark" expand="md" className="navbar-custom">
                         <Container>
-                            <Navbar.Brand href="#home">Spendology</Navbar.Brand>
+                            <Navbar.Brand href="#home" style={{ color: '#0C359E', fontWeight: 'bold' }}>Spendology</Navbar.Brand>
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setExpanded(!expanded)} />
                             <Navbar.Collapse id="responsive-navbar-nav" className={expanded ? 'show' : ''}>
                                 <Nav className="me-auto">
@@ -79,7 +105,7 @@ export const ExpenseTracker = () => {
                                     <Nav.Link href="http://localhost:3000/profile-page">Profile</Nav.Link>
                                 </Nav>
                             </Navbar.Collapse>
-                        </Container>    
+                        </Container>
                     </Navbar>
 
                     <div className="content">
@@ -111,7 +137,7 @@ export const ExpenseTracker = () => {
                             </div>
                             <div id="add-transaction" className="add-transaction">
                                 <h2>Add Transaction</h2>
-                                <form className="add-transaction-form" onSubmit={handleAddTransaction}>
+                                <form className="add-transaction-form" onSubmit={handleTransactionSubmit}>
                                     <div className="form-group">
                                         <label htmlFor="category">Select Type:</label>
                                         <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
@@ -130,9 +156,9 @@ export const ExpenseTracker = () => {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="amount">Enter the amount of money:</label>
-                                        <input type="number" value={amount} onChange={handleAmountChange} placeholder="Amount" required />
+                                        <input type="number" id="amount" value={transactionAmount} onChange={handleTransactionAmountChange} placeholder="Amount" required />
                                     </div>
-                                    <button type="submit" className="submit-button" onClick={handleAddTransaction}>Add Transaction</button>
+                                    <button type="submit" className="submit-button">Add Transaction</button>
                                 </form>
                             </div>
                         </div>
