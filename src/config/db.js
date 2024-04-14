@@ -60,6 +60,66 @@ app.get('/savings/:userId', (req, res) => {
   });
 });
 
+app.get('/monthly-summary/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  
+  // Get the current month and year
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // Month is zero-based, so add 1
+  const currentYear = currentDate.getFullYear();
+  
+  try {
+    // Fetch sum of income for the current month
+    const incomeResult = await client.query(
+      'SELECT SUM(amount) AS total_income FROM transaction WHERE user_id = $1 AND type_id = 1 AND EXTRACT(MONTH FROM timestamp) = $2 AND EXTRACT(YEAR FROM timestamp) = $3',
+      [userId, currentMonth, currentYear]
+    );
+    
+    // Fetch sum of expense for the current month
+    const expenseResult = await client.query(
+      'SELECT SUM(amount) AS total_expense FROM transaction WHERE user_id = $1 AND type_id = 2 AND EXTRACT(MONTH FROM timestamp) = $2 AND EXTRACT(YEAR FROM timestamp) = $3',
+      [userId, currentMonth, currentYear]
+    );
+
+    // Extract the sum of income and expense from the query results
+    const totalIncome = incomeResult.rows[0].total_income || 0;
+    const totalExpense = expenseResult.rows[0].total_expense || 0;
+
+    res.json({ totalIncome, totalExpense });
+  } catch (error) {
+    console.error('Error fetching monthly summary:', error);
+    res.status(500).json({ error: 'Internal Server Error: ' + error.message });
+  }
+});
+
+app.get('/transactions/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  // Get the current month and year
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
+  const currentYear = currentDate.getFullYear();
+
+  // Query to get transactions for the current month
+  const query = `
+    SELECT typess.name AS type, category.name AS category, amount
+    FROM transaction
+    JOIN typess ON transaction.type_id = typess.id
+    JOIN category ON transaction.category_id = category.id
+    WHERE user_id = $1
+    AND EXTRACT(MONTH FROM timestamp) = $2
+    AND EXTRACT(YEAR FROM timestamp) = $3
+  `;
+
+  try {
+    const result = await client.query(query, [userId, currentMonth, currentYear]);
+    res.json({ transactions: result.rows });
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/add-income/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { amount, category } = req.body;
@@ -211,6 +271,32 @@ app.post('/signin', async (req, res) => {
     console.error('Error signing in:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+// Add API endpoint to fetch username
+app.get('/username/:userId', (req, res) => {
+  const userId = req.params.userId;
+  client.query('SELECT name FROM users WHERE id = $1', [userId], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+      return;
+    }
+    res.json({ username: result.rows[0].name });
+  });
+});
+
+// Add API endpoint to fetch user email
+app.get('/email/:userId', (req, res) => {
+  const userId = req.params.userId;
+  client.query('SELECT email FROM users WHERE id = $1', [userId], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+      return;
+    }
+    res.json({ email: result.rows[0].email });
+  });
 });
 
 // Server and Database Connection Closure

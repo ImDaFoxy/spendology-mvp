@@ -173,5 +173,41 @@ body {
     border-radius: 15px;
     padding: 20px;
     min-height: 645px;
-    display:flex;
+    max-height: 645px; 
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-around;
+}
+
+.transaction-list {
+    flex: 1; /* Fill remaining vertical space */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.transaction-list ul {
+    list-style-type: none; /* to make have no bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+.transaction-title {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.transaction-inner {
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-around;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    background-color: #B5E0F3;
+}
+
+.transaction-amount {
+    text-align: end;
+    font-size: 40px;
 }

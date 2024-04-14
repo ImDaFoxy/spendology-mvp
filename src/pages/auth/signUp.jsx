@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Route, Routes, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {SignIn} from './index';
@@ -13,12 +13,22 @@ export const SignUp = () => {
   const handleSignUp = async () => {
     try {
       const response = await axios.post('http://localhost:3001/signup', { name, email, password });
-      console.log(response.data);
+      // console.log(response.data);
+      // navigate('/expense-tracker');
+      localStorage.setItem('userId', response.data.user.id);
+      localStorage.setItem('userData', JSON.stringify(response.data.user));
       navigate('/expense-tracker');
     } catch (error) {
       console.error('Error signing up:', error);
     }
   };
+
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      // navigate('/');
+    }
+  }, [navigate]);
 
   return (
     <div className="login-page">

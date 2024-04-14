@@ -3,7 +3,7 @@
     color: black;
     height: 100%;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 15px;
 }
 .sidebar a{
     margin-left: 10px;
@@ -17,8 +17,14 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    border-radius: 15px;
 }
 
 .row{
     align-items: stretch;
 }
+
+h1 {
+    font-weight: bold;
+    text-align: center;
+  }

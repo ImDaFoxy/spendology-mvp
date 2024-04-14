@@ -11,6 +11,10 @@ export const ExpenseTracker = () => {
     const [savings, setSavings] = useState(0);
     const [userId, setUserId] = useState(null);
     const [transactionAmount, setTransactionAmount] = useState(0);
+    const [transactions, setTransactions] = useState([]);
+    const [monthlySummary, setMonthlySummary] = useState({ totalIncome: 0, totalExpense: 0 });
+    const sortedTransactions = [...transactions].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
 
     useEffect(() => {
         const userData = localStorage.getItem('userData');
@@ -24,6 +28,8 @@ export const ExpenseTracker = () => {
         updateSubcategoryOptions();
         if (userId) {
             fetchBalanceAndSavings();
+            fetchTransactions();
+            fetchMonthlySummary();
         }
     }, [selectedCategory, userId]);
 
@@ -53,6 +59,26 @@ export const ExpenseTracker = () => {
         setSavings(savingsData.savings);
     };
 
+    const fetchMonthlySummary = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/monthly-summary/${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setMonthlySummary(data);
+            } else {
+                // Handle error
+            }
+        } catch (error) {
+            console.error('Error fetching monthly summary:', error);
+        }
+    };
+
+    const fetchTransactions = async () => {
+        const response = await fetch(`http://localhost:3001/transactions/${userId}`);
+        const data = await response.json();
+        setTransactions(data.transactions);
+    };
+
     const handleTransactionAmountChange = (event) => {
         setTransactionAmount(event.target.value);
     };
@@ -71,8 +97,9 @@ export const ExpenseTracker = () => {
     
             // Determine the URL based on the selected category and subcategory
             let url;
-            const selectedSubcategory = document.getElementById("subcategory").value;
+            const selectedSubcategory = document.getElementById("subcategory").value.toLowerCase(); // Convert to lowercase
     
+            let categoryId;
             if (selectedCategory === 'savings') {
                 if (selectedSubcategory === 'insert') {
                     url = `http://localhost:3001/add-to-savings/${userId}`;
@@ -81,8 +108,24 @@ export const ExpenseTracker = () => {
                 }
             } else if (selectedCategory === 'income') {
                 url = `http://localhost:3001/add-income/${userId}`;
+                if (selectedSubcategory === 'salary') {
+                    categoryId = 1;
+                } else if (selectedSubcategory === 'bonus') {
+                    categoryId = 2;
+                } else if (selectedSubcategory === 'other') {
+                    categoryId = 3;
+                }
             } else if (selectedCategory === 'expense') {
                 url = `http://localhost:3001/add-expense/${userId}`;
+                if (selectedSubcategory === 'rent') {
+                    categoryId = 4;
+                } else if (selectedSubcategory === 'utilities') {
+                    categoryId = 5;
+                } else if (selectedSubcategory === 'groceries') {
+                    categoryId = 6;
+                } else if (selectedSubcategory === 'other') {
+                    categoryId = 7;
+                }
             }
     
             // Make the API call
@@ -91,7 +134,7 @@ export const ExpenseTracker = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ amount }),
+                body: JSON.stringify({ amount, category: categoryId }), // Pass the category ID
             });
     
             // Handle the response
@@ -99,10 +142,13 @@ export const ExpenseTracker = () => {
                 const responseData = await response.json();
                 if (selectedCategory === 'savings') {
                     setSavings(responseData.saving);
+                    setBalance(responseData.balance);
                 } else {
                     setBalance(responseData.balance);
                 }
                 setTransactionAmount(0);
+                fetchMonthlySummary();
+                fetchTransactions();
             } else {
                 // Handle error
             }
@@ -146,11 +192,11 @@ export const ExpenseTracker = () => {
                                     <div className="summary">
                                         <div className="income">
                                             <h4>Income</h4>
-                                            <p>Rp. 0</p>
+                                            <p>Rp. {monthlySummary.totalIncome}</p>
                                         </div>
                                         <div className="expense">
                                             <h4>Expense</h4>
-                                            <p>Rp. 0</p>
+                                            <p>Rp. {monthlySummary.totalExpense}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -184,8 +230,26 @@ export const ExpenseTracker = () => {
                         </div>
                         <div className="right">
                             <div className="transactions">
-                                <h2>Transactions</h2>
-                                {/* Transaction List goes here */}
+                                <div className="transaction-title">
+                                    <h2>Transactions</h2>
+                                </div>
+                                <div className="transaction-list">
+                                <ul>
+                                    {sortedTransactions.reverse().map((transaction, index) => (
+                                        <li key={index}>
+                                            <div className="transaction-inner">
+                                                <div className="transaction-type">
+                                                    <h3>{transaction.type}</h3>
+                                                    <p>{transaction.category}</p>
+                                                </div>
+                                                <div className="transaction-amount">
+                                                    <p>Rp {transaction.amount}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
