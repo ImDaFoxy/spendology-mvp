@@ -60,28 +60,48 @@ export const ExpenseTracker = () => {
     const handleTransactionSubmit = async (event) => {
         event.preventDefault();
         try {
+            // Get the transaction amount
+            const amount = parseFloat(transactionAmount);
+    
+            // Check if the amount is valid (greater than 0)
+            if (amount <= 0 || isNaN(amount)) {
+                alert("Your input must be a positive number.");
+                return; // Prevent further execution
+            }
+    
+            // Determine the URL based on the selected category and subcategory
             let url;
             const selectedSubcategory = document.getElementById("subcategory").value;
-
+    
             if (selectedCategory === 'savings') {
                 if (selectedSubcategory === 'insert') {
                     url = `http://localhost:3001/add-to-savings/${userId}`;
                 } else if (selectedSubcategory === 'take out') {
                     url = `http://localhost:3001/take-from-savings/${userId}`;
                 }
+            } else if (selectedCategory === 'income') {
+                url = `http://localhost:3001/add-income/${userId}`;
+            } else if (selectedCategory === 'expense') {
+                url = `http://localhost:3001/add-expense/${userId}`;
             }
-
+    
+            // Make the API call
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ amount: transactionAmount }),
+                body: JSON.stringify({ amount }),
             });
+    
+            // Handle the response
             if (response.ok) {
                 const responseData = await response.json();
-                setBalance(responseData.balance);
-                setSavings(responseData.saving);
+                if (selectedCategory === 'savings') {
+                    setSavings(responseData.saving);
+                } else {
+                    setBalance(responseData.balance);
+                }
                 setTransactionAmount(0);
             } else {
                 // Handle error
@@ -89,7 +109,7 @@ export const ExpenseTracker = () => {
         } catch (error) {
             console.error('Error:', error);
         }
-    };
+    };    
 
     return (
         <>

@@ -60,6 +60,64 @@ app.get('/savings/:userId', (req, res) => {
   });
 });
 
+app.post('/add-income/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const { amount, category } = req.body;
+  const typeId = 1; // Income type_id
+
+  try {
+    await client.query('BEGIN'); // Begin transaction
+
+    // Update user's balance with the income amount
+    const result = await client.query(
+      'UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING *',
+      [amount, userId]
+    );
+
+    // Record the transaction
+    await client.query(
+      'INSERT INTO transaction (user_id, type_id, category_id, amount) VALUES ($1, $2, $3, $4)',
+      [userId, typeId, category, amount]
+    );
+
+    await client.query('COMMIT'); // Commit transaction
+    res.json(result.rows[0]);
+  } catch (error) {
+    await client.query('ROLLBACK'); // Rollback transaction on error
+    console.error('Error executing query:', error);
+    res.status(500).json({ error: 'Internal Server Error: ' + error.message });
+  }
+});
+
+app.post('/add-expense/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const { amount, category } = req.body;
+  const typeId = 2; // Expense type_id
+
+  try {
+    await client.query('BEGIN'); // Begin transaction
+
+    // Update user's balance with the expense amount
+    const result = await client.query(
+      'UPDATE users SET balance = balance - $1 WHERE id = $2 RETURNING *',
+      [amount, userId]
+    );
+
+    // Record the transaction
+    await client.query(
+      'INSERT INTO transaction (user_id, type_id, category_id, amount) VALUES ($1, $2, $3, $4)',
+      [userId, typeId, category, amount]
+    );
+
+    await client.query('COMMIT'); // Commit transaction
+    res.json(result.rows[0]);
+  } catch (error) {
+    await client.query('ROLLBACK'); // Rollback transaction on error
+    console.error('Error executing query:', error);
+    res.status(500).json({ error: 'Internal Server Error: ' + error.message });
+  }
+});
+
 app.post('/add-to-savings/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { amount } = req.body;
