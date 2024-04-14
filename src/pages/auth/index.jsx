@@ -20,6 +20,7 @@ export const SignIn = () => {
       // Redirect to the ExpenseTracker page after successful sign-in
       console.log('Sign In Response:', response.data);
       localStorage.setItem('userData', JSON.stringify(response.data.user));
+      localStorage.setItem('userId', response.data.user.id);
       navigate('/expense-tracker');
     } catch (error) {
       console.error('Error signing in:', error);
