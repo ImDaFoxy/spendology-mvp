@@ -70,15 +70,22 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 
-Extra Notes : 
-npm install firebase    // For firebasae
-npm install bootstrap   // For Bootstrap
+Postgres Database is already on Database.txt in this file
 
-cd to db.js :
+Before anything please open terminal and run :
 npm install express
 npm install pg
 npm install cors
+npm install bootstrap
+npm install axios
+<!-- npm install express-session (no need anymore) -->
 
-To make this work, you need to open 2 terminal : 
-1. To start /npm start
-2. The other specifically in db.js doing node db.js
+You need 2 terminal to run this file 
+- To run react : 
+1. do /npm start
+
+- To run express js : 
+1. cd src
+2. cd config 
+3. node db.js
+(in case doesn't work, do 'npm install express' in this terminal after cd config)

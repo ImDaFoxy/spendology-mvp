@@ -1,0 +1,46 @@
+CREATE TABLE typess (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE category (
+    id SERIAL PRIMARY KEY,
+    type_id INT REFERENCES typess(id),
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255) NOT NULL,
+    balance NUMERIC(10, 2) DEFAULT 0,
+    saving NUMERIC(10, 2) DEFAULT 0,
+    password VARCHAR(255)
+);
+
+CREATE TABLE transaction (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    type_id INT REFERENCES typess(id),
+    category_id INT REFERENCES category(id),
+    amount NUMERIC(10, 2) NOT NULL,
+    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO category (type_id, name) 
+VALUES 
+    (1, 'salary'),
+    (1, 'bonus'),
+    (1, 'other'),
+    (2, 'rent'),
+    (2, 'utilities'),
+    (2, 'groceries'),
+    (2, 'other'),
+    (3, 'insert'),
+    (3, 'take out');
+
+INSERT INTO typess (name) 
+VALUES 
+    ('Income'),
+    ('Expense'),
+    ('Savings');
