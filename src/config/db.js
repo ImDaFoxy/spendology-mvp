@@ -11,7 +11,7 @@ const client = new Client({
   user: 'postgres',
   host: 'localhost',
   database: 'expense',
-  password: '',  // ensure correct password is used in actual deployment
+  password: 'goldie123',  // ensure correct password is used in actual deployment
   port: 5432,
 });
 

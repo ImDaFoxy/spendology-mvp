@@ -15,7 +15,6 @@ export const ExpenseTracker = () => {
     const [monthlySummary, setMonthlySummary] = useState({ totalIncome: 0, totalExpense: 0 });
     const sortedTransactions = [...transactions].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-
     useEffect(() => {
         const userData = localStorage.getItem('userData');
         if (userData) {
@@ -32,6 +31,15 @@ export const ExpenseTracker = () => {
             fetchMonthlySummary();
         }
     }, [selectedCategory, userId]);
+
+    // Number formatter function
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        }).format(amount);
+    };
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
@@ -95,10 +103,28 @@ export const ExpenseTracker = () => {
                 return; // Prevent further execution
             }
     
+            // Check if the selected category is expense and if the expense exceeds the balance
+            if (selectedCategory === 'expense' && amount > balance) {
+                alert("Expense amount cannot exceed the available balance.");
+                return; // Prevent further execution
+            }
+    
+            // Retrieve the selected subcategory directly from the event object
+            const selectedSubcategory = event.target.elements.subcategory.value.toLowerCase();
+    
+            // Check if the selected category is savings and if the amount exceeds the balance or savings
+            if (selectedCategory === 'savings') {
+                if (selectedSubcategory === 'insert' && amount > balance) {
+                    alert("Savings amount cannot exceed the available balance.");
+                    return; 
+                } else if (selectedSubcategory === 'take out' && amount > savings) {
+                    alert("The amount of savings taken out cannot exceed the available amount of savings.");
+                    return;
+                }
+            }
+        
             // Determine the URL based on the selected category and subcategory
             let url;
-            const selectedSubcategory = document.getElementById("subcategory").value.toLowerCase(); // Convert to lowercase
-    
             let categoryId;
             if (selectedCategory === 'savings') {
                 if (selectedSubcategory === 'insert') {
@@ -127,7 +153,7 @@ export const ExpenseTracker = () => {
                     categoryId = 7;
                 }
             }
-    
+        
             // Make the API call
             const response = await fetch(url, {
                 method: 'POST',
@@ -136,7 +162,7 @@ export const ExpenseTracker = () => {
                 },
                 body: JSON.stringify({ amount, category: categoryId }), // Pass the category ID
             });
-    
+        
             // Handle the response
             if (response.ok) {
                 const responseData = await response.json();
@@ -180,11 +206,11 @@ export const ExpenseTracker = () => {
                                 <div className="balance-container">
                                     <div className='total-balance'>
                                         <h3>Your Balance</h3>
-                                        <h2>Rp {balance}</h2>
+                                        <h2>{formatCurrency(balance)}</h2>
                                     </div>
                                     <div className='saving-balance'>
                                         <h3>Your Savings</h3>
-                                        <h2>Rp {savings}</h2>
+                                        <h2>{formatCurrency(savings)}</h2>
                                     </div>
                                 </div>
                                 <div className="summary-container">
@@ -192,11 +218,11 @@ export const ExpenseTracker = () => {
                                     <div className="summary">
                                         <div className="income">
                                             <h4>Income</h4>
-                                            <p>Rp. {monthlySummary.totalIncome}</p>
+                                            <p>{formatCurrency(monthlySummary.totalIncome)}</p>
                                         </div>
                                         <div className="expense">
                                             <h4>Expense</h4>
-                                            <p>Rp. {monthlySummary.totalExpense}</p>
+                                            <p>{formatCurrency(monthlySummary.totalExpense)}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +240,7 @@ export const ExpenseTracker = () => {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="subcategory">Select Category:</label>
-                                        <select id="subcategory">
+                                        <select id="subcategory" onChange={updateSubcategoryOptions}>
                                             {subcategoryOptions.map((option, index) => (
                                                 <option key={index} value={option.toLowerCase()}>{option}</option>
                                             ))}
@@ -234,21 +260,21 @@ export const ExpenseTracker = () => {
                                     <h2>Transactions</h2>
                                 </div>
                                 <div className="transaction-list">
-                                <ul>
-                                    {sortedTransactions.reverse().map((transaction, index) => (
-                                        <li key={index}>
-                                            <div className="transaction-inner">
-                                                <div className="transaction-type">
-                                                    <h3>{transaction.type}</h3>
-                                                    <p>{transaction.category}</p>
+                                    <ul>
+                                        {sortedTransactions.reverse().map((transaction, index) => (
+                                            <li key={index}>
+                                                <div className="transaction-inner">
+                                                    <div className="transaction-type">
+                                                        <h3>{transaction.type}</h3>
+                                                        <p>{transaction.category}</p>
+                                                    </div>
+                                                    <div className="transaction-amount">
+                                                        <p>{formatCurrency(transaction.amount)}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="transaction-amount">
-                                                    <p>Rp {transaction.amount}</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             </div>
                         </div>
